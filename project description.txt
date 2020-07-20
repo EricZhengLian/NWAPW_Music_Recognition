@@ -1,0 +1,22 @@
+﻿Project Description
+Motivation: 
+Recognizing and identifying the name of a piece of music we hear can be a challenging task sometimes for listeners. There are existing commercial apps such as Shazam and SoundHound that are able to identify the songs for us by examining acoustic features of the targeted fixed-duration audio and comparing these features against their built-in database. This project aims to create a program similar to those apps from scratch. The whole project is written in Python. 
+
+
+Algorithm:
+The task of music recognition consists of two essential parts: audio fingerprinting and similarity measurement. The former can be thought of as audio feature extractions and labelling. We are likely to apply common audio feature extraction techniques such as fast fourier transform (FFT) and short-time fourier transform (STFT) to process raw wav files and turn them into high-dimensional vectors. Due to the high dimensionality, common machine learning supervised classification algorithms such as K-nearest neighbor can yield very high computational complexity. It’s also expensive to compare high-dimensional feature vectors. The locality sensitive hashing algorithm (LSH) comes in handy for audio fingerprinting as it assign each vector a hash value based on some specific hash functions which can reduce the dimensionality enormously while preserve the local similarity (as its name suggests) or the relative distance between the original feature vectors in the high dimensional space. By building a database of hash values, one can realistically incorporate a large corpus for comparisons. This can be considered as the training phase. In the testing phase (the actual music “recognition” part), we will process the test audio and label it with a hash value in the same manner as we did to all the training data, and we will use a similarity measurement algorithm (e.g. cosine similarity by dot product) to match it with pieces/songs in the database that are most similar to it in terms of acoustic features. The program will be refined and improved by adjusting parameters and hyperparameters as well as trying different hash functions and audio processing techniques. 
+
+
+Tools and libraries:
+* Numpy: doing mathy stuff like doc products, transposing matrix and so on.
+* Pandas: visualizing high dimensional data. Storing dataset.
+* Librosa: doing audio signal processing such as fft, stft, visualization of spectrogram and chromagragram.
+* Scikit learn: machine learning algorithms
+
+
+
+
+
+
+Frontend:
+        The frontend will likely be browser based, using NodeJS to directly interact with the python program and database, allowing users to upload their files and run them through the program.
