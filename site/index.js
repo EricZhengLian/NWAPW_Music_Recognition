@@ -1,26 +1,28 @@
-var express = require('express');
-const port = "3200";
+const express = require('express');
+const port = 3200;
 const parser = require('body-parser');
-
-
-//const { body,validationResult } = require('express-validator/check');
-//const { sanitizeBody } = require('express-validator/filter');
-
 var app = express();
+
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
 
 app.use(express.static(__dirname + '/www'));
 app.use(parser.urlencoded({extended: true}));
 
 app.post('/upload', (req, res) => {
+	error = "";
 	console.log("Name: ", req.body.audio_name);
+	if(req.body.file == undefined) error = "Please provide a file. "
+	if(req.body.artist_name.length < 3) error = "Artist name too short";
+	if(req.body.audio_name.length < 3) error = "Track title too short";
 	console.log("Artist: ", req.body.artist_name);
-	console.log("File: ", req.body.file)
+	console.log("File: ", req.body.file);
 	res.redirect("/");
 });
 
-app.listen(port);
+io.on('connection', (socket) => {
+	console.log(socket);
+});
+http.listen(port);
 console.log('working on port ' + port);
-/*
-body("audio_name", "Invallid Name").isLength({min: 2})
-body("artist_name", "Invallid Artist").isLength({min: 2})
-*/

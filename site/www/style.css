@@ -75,10 +75,30 @@ body
 	text-align: center;
 	width: 100%;
 }
-#upload h2
+.mainSection h2
 {
 	font-size: 36pt;
 }
 
-
-
+.mainSection
+{
+	margin: auto;
+	padding: 10px 10px 10px 10px;
+	border-radius: 8px;
+	max-width: 80%;
+	text-align: center;
+	width: 100%;
+	box-shadow: 10px 10px 30px black;
+}
+.dz-button
+{
+	background-color: rgba(0, 0, 0, 0);
+	color: #ede8c3;
+	border: 2px dotted white;
+	border-radius: 10px;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
