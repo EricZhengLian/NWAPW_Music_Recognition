@@ -12,7 +12,10 @@ body
 	padding: 0;
 	margin-bottom: 50px;
 }
-
+#error
+{
+	color: red;
+}
 .title
 {
 	max-width: 100%;
