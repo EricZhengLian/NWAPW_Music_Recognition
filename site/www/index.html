@@ -34,26 +34,6 @@
         <div id="yourUploads" class='mainSection'>
             <h2>Your files</h2>
             <p id="yourUploadsTxt"></p>
-            <script>
-                function setupUploads()
-                {
-                    var uploadsArea = document.getElementById("yourUploadsTxt");
-                    var uploads = Cookies.get("comparisons");
-                    console.log(uploads);
-                    if(!uploads){uploadsArea.innerHTML = "You haven't uploaded any files."; return;}
-                    uploads = JSON.parse(uploads);
-                    var newTxt = ""
-                    for(var i in uploads)
-                    {
-                        upload = uploads[i]
-                        var compared = ""
-                        compared = " - Pending"
-                        newTxt += upload + compared + "<br>";
-                    }
-                    uploadsArea.innerHTML = newTxt;
-                }
-            setupUploads()
-            </script>
         </div>
         <br><br><br><br><br><!--I know this is a terrible practice, but i'm lazy--><br><br>
     	<div id="compare" class='mainSection'>
@@ -62,7 +42,7 @@
             <p id='compareError' class='error'></p>
             <label for="file">File: </label>
              <input type="file" id="file" name="file" required>
-             <input type="text" id="userID" name="userID">
+             <input type="text" id="userID" name="userID" style="visibility: hidden;">
              <input class="submitButton" type="submit" value="OK">
          </form>   
         </div>
@@ -81,6 +61,30 @@
     		</form>
             <script>
     			const socket = io('ws://localhost:3200');
+                socket.emit("userConnect", Cookies.get("userID"));
+
+                //an upload looks like this: {"name": name of the file, "complete": true/false}
+                socket.on("sendUserUploads", (uploads) =>{
+                    console.log(uploads)
+                    myUploads = uploads;
+                    setupUploads(uploads)
+                });
+                function setupUploads(uploads)
+                {
+                    var uploadsArea = document.getElementById("yourUploadsTxt");
+                    if(uploads.length <= 0){uploadsArea.innerHTML = "You haven't uploaded any files."; return;}
+                    var newTxt = ""
+                    for(var i in uploads)
+                    {
+                        upload = uploads[i]
+                        var compared = " - complete. "
+                        if(!upload["complete"])
+                            compared = " - pending"
+                        newTxt += upload["name"] + compared + "<br>";
+                    }
+                    uploadsArea.innerHTML = newTxt;
+                }
+
                 function ClearCookies()
                 {
                     document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
@@ -99,7 +103,6 @@
                     var old = JSON.parse(Cookies.get("comparisons"));
                     old.push(document.compareFile.file.value.toString().replace(/^.*[\\\/]/, ''));
                     Cookies.set("comparisons", JSON.stringify(old));
-                    console.log("test");
                     return true;
                 }
     			function VerifyForm()
@@ -131,7 +134,6 @@
     			{
 
     			}
-
     		</script>
     	</div>
 

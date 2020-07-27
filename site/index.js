@@ -16,11 +16,19 @@ app.use(express.static(__dirname + '/www'));
 app.use(cookieParser());
 //app.use(parser.urlencoded({extended: true}));
 
-
+var users = {}
 
 app.post('/compare', (req, res) => {
 	const form = new formidable.IncomingForm();
 	form.parse(req, function(err, fields, files){
+		var userID = fields.userID;
+		console.log("user " + userID + " has uploaded a file for comparison. ");
+		if(users[userID] == undefined)
+		{
+			return; //the user doesn't exist. they shouldn't be uploading stuff
+		}
+		users[userID]["uploads"].push({"name": path.basename(files.file.name), "complete": false});
+		console.log(users[userID]);
 		var oldPath = files.file.path;
 		var newPath = path.join(__dirname, "comparisons/" + path.basename(files.file.name));
 		var rawData = fs.readFileSync(oldPath);
@@ -28,12 +36,15 @@ app.post('/compare', (req, res) => {
             if(err) console.log(err);
             return console.log("Successfully uploaded");
         });
-        var process = spawn.spawn('bash', ['../runmeinaterminal.bash'])
+        
+
+        var process = spawn.spawn('python3', ['examplescript.py'])
         process.stdout.on('data', function(data)
         {
         	console.log(data.toString())
         });
 	});
+	res.redirect("/");
 });
 
 app.post('/upload', (req, res) => {
@@ -60,6 +71,18 @@ app.post('/upload', (req, res) => {
 
 io.on('connection', (socket) => {
 	//console.log(socket);
+	socket.on("userConnect", (userID) =>
+	{
+		console.log("user " + userID + " connected. ");
+		if(users[userID] == undefined)
+		{
+			users[userID] = {"uploads": []};
+		}
+		//emit uploads from that user
+		var sendingUploads = users[userID]["uploads"];
+		console.log(sendingUploads);
+		socket.emit("sendUserUploads", users[userID]["uploads"]);
+	});
 
 });
 http.listen(port);
