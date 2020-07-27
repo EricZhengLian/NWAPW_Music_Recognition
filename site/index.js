@@ -31,7 +31,7 @@ app.post('/compare', (req, res) => {
         var process = spawn.spawn('bash', ['../runmeinaterminal.bash'])
         process.stdout.on('data', function(data)
         {
-        	console.log(data)
+        	console.log(data.toString())
         });
 	});
 });
