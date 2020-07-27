@@ -17,7 +17,18 @@ app.use(cookieParser());
 
 
 
-
+app.post('/compare', (req, res) => {
+	const form = new formidable.IncomingForm();
+	form.parse(req, function(err, fields, files){
+		var oldPath = files.file.path;
+		var newPath = path.join(__dirname, "comparisons/" + path.basename(files.file.name));
+		var rawData = fs.readFileSync(oldPath);
+        fs.writeFile(newPath, rawData, function(err){
+            if(err) console.log(err);
+            return console.log("Successfully uploaded");
+        });
+	});
+});
 
 app.post('/upload', (req, res) => {
 	//console.log("Name: ", req.body.audio_name);

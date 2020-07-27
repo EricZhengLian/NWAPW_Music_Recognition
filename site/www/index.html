@@ -19,20 +19,23 @@
 	    	</div>
     	</div>
         <div id="yourUploads" class='mainSection'>
-            <h2>Your uploads</h2>
+            <h2>Your files</h2>
             <p id="yourUploadsTxt"></p>
             <script>
                 function setupUploads()
                 {
                     var uploadsArea = document.getElementById("yourUploadsTxt");
-                    var uploads = Cookies.get("uploads");
+                    var uploads = Cookies.get("comparisons");
                     console.log(uploads);
-                    if(!uploads){uploadsArea.innerHTML = "You have no uploads."; return;}
+                    if(!uploads){uploadsArea.innerHTML = "You haven't uploaded any files."; return;}
                     uploads = JSON.parse(uploads);
                     var newTxt = ""
                     for(var i in uploads)
                     {
-                        newTxt += uploads[i] + "<br>";
+                        upload = uploads[i]
+                        var compared = ""
+                        compared = " - Pending"
+                        newTxt += upload + compared + "<br>";
                     }
                     uploadsArea.innerHTML = newTxt;
                 }
@@ -40,36 +43,61 @@
             </script>
         </div>
         <br><br><br><br><br><!--I know this is a terrible practice, but i'm lazy--><br><br>
-    	<div id="upload" class='mainSection'>
+    	<div id="compare" class='mainSection'>
+         <h2>Compare a file to our dataset</h2>
+         <form name="compareFile" action="/compare/" onsubmit="return VerifyCompare();" method="post" id="compareDropzone" enctype="multipart/form-data">
+            <p id='compareError' class='error'></p>
+            <label for="file">File: </label>
+             <input type="file" id="file" name="file" required>
+             <input class="submitButton" type="submit" value="OK">
+         </form>   
+        </div>
+        <br><br><br><br><br><br><br>
+        <div id="upload" class='mainSection'>
     		<h2>Upload a file to the database</h2>
     		<form name="uploadFile" action="/upload/" onsubmit="return VerifyForm();" method="post" id="uploadDropzone" enctype="multipart/form-data">
-    			<p id='error'></p>
+    			<p id='uploadError' class='error'></p>
     			<label for="file">File: </label>
     			<input type='file' id='file' name='file' required>
     			<label for="audio_name">Track Name: </label>
     			<input type="text" id="audio_name" name="audio_name" placeholder="Name of track" required autocomplete="off"></input><br>
     			<!--<label for="artist_name">Artist Name:</label>
     			<input type="text" id="artist_name" name="artist_name" placeholder="Name of artist" required autocomplete="off"></input><br>-->
+                <input class="submitButton" type="submit" value="OK">
     		</form>
-    		
-
             <script>
     			const socket = io('ws://localhost:3200');
                 function ClearCookies()
                 {
                     document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
                 }
+                function VerifyCompare()
+                {
+                    if(!document.compareFile.file.value.toString().endsWith(".wav"))
+                    {
+                        $("#compareError").html("Please upload a .WAV file. ");
+                        return false;
+                    }
+                    if(!Cookies.get("comparisons")){
+                        Cookies.set("comparisons", JSON.stringify([]));
+                    }
+                    var old = JSON.parse(Cookies.get("comparisons"));
+                    old.push(document.compareFile.file.value.toString().replace(/^.*[\\\/]/, ''));
+                    Cookies.set("comparisons", JSON.stringify(old));
+                    console.log("test");
+                    return true;
+                }
     			function VerifyForm()
     			{
     				console.log(Cookies.get());
     				if(!document.uploadFile.file.value.toString().endsWith(".wav"))
     				{
-    					$("#error").html("Please upload a .WAV file. ")
+    					$("#uploadError").html("Please upload a .WAV file. ");
     					return false;
     				}
     				if(document.uploadFile.audio_name.value.length < 3)
     				{
-    					$("#error").html("Name too short");
+    					$("#uploadError").html("Name too short");
     					return false;
     				}
     				//set cookie
@@ -86,7 +114,7 @@
     			}
     			function fixStuff()
     			{
-					document.getElementById("uploadDropzone").innerHTML += '<input class="submitButton" type="submit" value="OK">'
+
     			}
 
     		</script>
