@@ -29,6 +29,10 @@ app.post('/compare', (req, res) => {
             return console.log("Successfully uploaded");
         });
         var process = spawn.spawn('bash', ['../runmeinaterminal.bash'])
+        process.stdout.on('data', function(data)
+        {
+        	console.log(data)
+        });
 	});
 });
 
