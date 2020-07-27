@@ -77,7 +77,7 @@
                     for(var i in uploads)
                     {
                         upload = uploads[i]
-                        var compared = " - complete. "
+                        var compared = " - complete. This file sounds like " + upload["match"] + " (confidence level of " + upload['confidence'] + ")"
                         if(!upload["complete"])
                             compared = " - pending"
                         newTxt += upload["name"] + compared + "<br>";
