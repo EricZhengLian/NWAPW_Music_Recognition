@@ -5,6 +5,7 @@ const path = require('path');
 const formidable = require('formidable');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
+const spawn = require("child_process");
 var app = express();
 
 const http = require('http').Server(app);
@@ -27,6 +28,7 @@ app.post('/compare', (req, res) => {
             if(err) console.log(err);
             return console.log("Successfully uploaded");
         });
+        var process = spawn.spawn('bash', ['../runmeinaterminal.bash'])
 	});
 });
 
