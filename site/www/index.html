@@ -73,6 +73,12 @@
                     myUploads = uploads;
                     setupUploads(uploads)
                 });
+
+                function Update()
+                {
+                    socket.emit("updateFrom", (Cookies.get("userID")));
+                }
+                setInterval(Update, 1000)
                 function setupUploads(uploads)
                 {
                     var uploadsArea = document.getElementById("yourUploadsTxt");

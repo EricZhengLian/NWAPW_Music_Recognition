@@ -20,10 +20,11 @@ app.use(cookieParser());
 var users = {};
 users = JSON.parse(fs.readFileSync('users.json'));
 console.log(users);
-
+var notifications = []
+//Notification = {userID: userID, type: "updateUploads"}
 function Save()
 {
-	console.log("saving");
+	//console.log("saving");
 	fs.writeFileSync('users.json', JSON.stringify(users));
 }
 setInterval(Save, 10000)
@@ -65,6 +66,7 @@ app.post('/compare', (req, res) => {
 				upload["complete"] = asJson.complete;
 				upload["match"] = asJson.match;
 				upload["confidence"] = asJson.confidence;
+				notifications.push({userID: asJson.userID, type: "updateUploads"});
         	}
         	catch{
         		console.log("Not JSON data")
@@ -110,6 +112,22 @@ io.on('connection', (socket) => {
 		}
 		//emit uploads from that user
 		socket.emit("sendUserUploads", users[userID]["uploads"]);
+	});
+	socket.on("updateFrom", (userID) =>
+	{
+		for(var i in notifications)
+		{
+			if(notifications[i].userID == userID)
+			{
+				var n = notifications[i];
+				notifications.splice(i, 1);
+				console.log("notify user " + userID + " " + n.type)
+				if(n.type == "updateUploads")
+				{
+					socket.emit("sendUserUploads", users[userID]["uploads"]);
+				}
+			}
+		}
 	});
 
 });
