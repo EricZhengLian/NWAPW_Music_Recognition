@@ -100,9 +100,10 @@ class Database:
         "OFFSET_DIFFERENCE_IN_SEC": nsec
         }
     
-    def query(self, f):
+    def query(self, f, log=True):
         t0 = time.process_time()
         output = self.align_matches(self.find_matches(f))
         t = time.process_time()
-        print("Query time:", t-t0)
+        if log:
+            print("Query time:", t-t0)
         return output

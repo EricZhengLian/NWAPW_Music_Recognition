@@ -1,14 +1,17 @@
-import sys, json, time
+#mainly for testing purposes
+import sys, json, time, os
 fileName = sys.argv[1]
 userID = sys.argv[2]
 data = {}
+path = "../site/comparisons/" + fileName
+time.sleep(5)
+
+
 data["fileName"] = fileName
 data["userID"] = userID
-data["match"] = "no matches found"
+data["match"] = "example match"
 data["confidence"] = 0
 data["complete"] = True
-time.sleep(10)
-#at this point we pretend to have processed the file.
-#print(data)
+
 out = json.dumps(data)
 print(out)

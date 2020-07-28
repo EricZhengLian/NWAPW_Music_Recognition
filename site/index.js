@@ -38,21 +38,29 @@ app.post('/compare', (req, res) => {
         });
         
 
-        var process = spawn.spawn('python3', ['onCompare.py', path.basename(files.file.name), userID])
+        var process = spawn.spawn('python3', ['../core/onCompare.py', path.basename(files.file.name), userID])
+        console.log("A wild process has appeared!")
         process.stdout.on('data', function(data)
         {
         	//console.log(data.toString())
         	console.log("got data");
         	console.log(data.toString())
-        	var asJson = JSON.parse(data.toString());
-        	console.log("Got file upload data from user " + asJson.userID);
-        	var upload = users[asJson.userID]["uploads"][0]
-        	for(var i in users[asJson.userID]["uploads"])
-        		if(users[asJson.userID]["uploads"][i]["name"] == asJson.fileName) upload = users[asJson.userID]["uploads"][i]
-        	console.log("Upload: " + upload); //upload is what we want to modify
-        	upload["complete"] = asJson.complete;
-        	upload["match"] = asJson.match;
-        	upload["confidence"] = asJson.confidence;
+        	try{
+				var asJson = JSON.parse(data.toString());
+	        	console.log("Got file upload data from user " + asJson.userID);
+				var upload = users[asJson.userID]["uploads"][0]
+				for(var i in users[asJson.userID]["uploads"])
+					if(users[asJson.userID]["uploads"][i]["name"] == asJson.fileName) upload = users[asJson.userID]["uploads"][i]
+				console.log("Upload: " + upload); //upload is what we want to modify
+				upload["complete"] = asJson.complete;
+				upload["match"] = asJson.match;
+				upload["confidence"] = asJson.confidence;
+        	}
+        	catch{
+        		console.log("Not JSON data")
+        		return;
+        	}
+        	
         	//users[asJson.userID]["uploads"][]
         });
 	});
