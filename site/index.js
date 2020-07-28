@@ -17,7 +17,16 @@ app.use(express.static(__dirname + '/www'));
 app.use(cookieParser());
 //app.use(parser.urlencoded({extended: true}));
 
-var users = {}
+var users = {};
+users = JSON.parse(fs.readFileSync('users.json'));
+console.log(users);
+
+function Save()
+{
+	console.log("saving");
+	fs.writeFileSync('users.json', JSON.stringify(users));
+}
+setInterval(Save, 10000)
 
 app.post('/compare', (req, res) => {
 	const form = new formidable.IncomingForm();
@@ -103,5 +112,8 @@ io.on('connection', (socket) => {
 	});
 
 });
+
+
+
 http.listen(port);
 console.log('working on port ' + port);
