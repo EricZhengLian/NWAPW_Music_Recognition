@@ -3,6 +3,7 @@ import sys, json, time, os
 time.sleep(3) #wait for the file to upload first
 fileName = sys.argv[1]
 userID = sys.argv[2]
+dbname = sys.argv[3]
 data = {}
 path = "../site/comparisons/" + fileName
 from db import Database
@@ -14,7 +15,7 @@ csvpath = "./"
 if str(os.getcwd()).endswith("site"):
 	csvpath = "../core/"
 
-db.load(csvpath+"operas.csv", csvpath+"opera_fingerprints.csv") #right now we load this because it's the only csv file there is.
+db.load(csvpath+f"{dbname}.csv", csvpath+f"{dbname}_fingerprints.csv") #right now we load this because it's the only csv file there is.
 
 #print("files loaded")
 

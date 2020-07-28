@@ -32,6 +32,7 @@ app.post('/compare', (req, res) => {
 	const form = new formidable.IncomingForm();
 	form.parse(req, function(err, fields, files){
 		var userID = fields.userID;
+		var dbname = fields.category
 		console.log("user " + userID + " has uploaded a file for comparison. ");
 		if(users[userID] == undefined)
 		{
@@ -47,7 +48,7 @@ app.post('/compare', (req, res) => {
         });
         
 
-        var process = spawn.spawn('python3', ['../core/onCompare.py', path.basename(files.file.name), userID])
+        var process = spawn.spawn('python3', ['../core/onCompare.py', path.basename(files.file.name), userID, dbname])
         console.log("A wild process has appeared!")
         process.stdout.on('data', function(data)
         {
