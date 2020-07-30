@@ -26,11 +26,15 @@ def fingerprint(x, fs):
     return generate_hashes(peaks)
 
 def preprocess(x, fs):
-        if x.ndim==2:
-            x = x[:,0].squeeze()
-        if int(fs) != int(44100):
-            x = scipy.signal.resample(x, int(x.size*44100/fs))
-        return x
+    '''
+    Make sure the audio files are mono-channel and 
+    sampled at 44100 Hz.
+    '''
+    if x.ndim==2:
+        x = x[:,0].squeeze()
+    if int(fs) != int(44100):
+        x = scipy.signal.resample(x, int(x.size*44100/fs))
+    return x
     
 def get_2D_peaks(arr2D, plot=False, amp_min=-60):
     """

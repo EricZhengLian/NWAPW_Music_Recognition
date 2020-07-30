@@ -11,13 +11,17 @@ import time
 
 class Database:
     def __init__(self):
-        self.song_table = pd.DataFrame({'song_id':[], 'name':[]})
-        self.fingerprint_table = pd.DataFrame({'song_id':[], 'hash':[], 'offset':[]})
+        self.song_table = pd.DataFrame({'song_id':[], 'name':[]}) #song table has two columns
+        self.fingerprint_table = pd.DataFrame({'song_id':[], 'hash':[], 'offset':[]})  #fingerprint table has three columbs
     
     def addRow(self, table, row):
         table.loc[len(table)] = row
        
     def parse_file_hash(self, filename):
+        '''
+        Generate a song_id using 
+        sha1 hashing algorithm. 
+        '''
         s = sha1()
         with open(filename , "rb") as f:
             while True:
@@ -43,7 +47,7 @@ class Database:
     def get_song_hashes_count(self, song_id):
         return len(self.fingerprint_table.loc[self.fingerprint_table['song_id'] == song_id])
             
-    def train(self, training_dir):
+    def train(self, training_dir): # add all the wavs in a directory to the database
         t0 = time.process_time()
         i = 0
         for f in glob.iglob(training_dir+'/*.wav'):
@@ -65,7 +69,8 @@ class Database:
         hashes = set(fingerprint.fingerprint(x, fs))
         return self.return_matches(hashes)
     
-    def return_matches(self, hashes):
+    def return_matches(self, hashes): # return all the (id, offset_difference) tuple
+        # based on finding the rows that match the hashes the target has
         mapper = {}
         for hash_, offset in hashes:
             mapper[hash_] = offset
@@ -86,7 +91,7 @@ class Database:
         cnt = Counter(matches)
        # for match in cnt:
            # cnt[match] /= self.get_song_hashes_count(match[0])
-        best_guess = cnt.most_common(1)[0]
+        best_guess = cnt.most_common(1)[0] # find the one that has the most matches with the target audio
         largest_count = best_guess[1]
         song_id = best_guess[0][0]
         offset_difference = best_guess[0][1]
@@ -95,7 +100,7 @@ class Database:
         return {
         "SONG_ID" : song_id,
         "SONG_NAME" : song_name,
-        "SIMIlAR_FEATURES_COUNT" : largest_count,
+        "SIMILAR_FEATURES_COUNT" : largest_count,
         "OFFSET_DIFFERENCE" : offset_difference,
         "OFFSET_DIFFERENCE_IN_SEC": nsec
         }
