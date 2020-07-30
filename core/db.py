@@ -95,7 +95,7 @@ class Database:
         return {
         "SONG_ID" : song_id,
         "SONG_NAME" : song_name,
-        "CONFIDENCE" : largest_count/len(matches),
+        "SIMIlAR_FEATURES_COUNT" : largest_count,
         "OFFSET_DIFFERENCE" : offset_difference,
         "OFFSET_DIFFERENCE_IN_SEC": nsec
         }
