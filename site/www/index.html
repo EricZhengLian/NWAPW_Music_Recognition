@@ -33,7 +33,7 @@
     	</div>
         <div id="yourUploads" class='mainSection'>
             <h2>Your files</h2>
-            <p id="yourUploadsTxt"></p>
+            <table id="yourUploadsTxt"></table>
         </div>
         <br><br><br><br><br><!--I know this is a terrible practice, but i'm lazy--><br><br>
     	<div id="compare" class='mainSection'>
@@ -43,8 +43,16 @@
             <label for="file">File: </label>
              <input type="file" id="file" name="file" required>
              <select id="category" name="category">
-                <option value="opera">Opera</option>
                 <option value="classical">Classical</option>
+                <option value="country">Country</option>
+                <option value="electronic">Electronic</option>
+                <option value="heavy metal">Heavy Metal</option>
+                <option value="hiphop">Hip Hop</option>
+                <option value="jazz">Jazz</option>
+                <option value="Kpop">Kpop</option>
+                <option value="opera">Opera</option>
+                <option value="R&B">R&B</option>
+                <option value="rock">Rock</option>
              </select>
              <input type="text" id="userID" name="userID" style="visibility: hidden;">
              <input class="submitButton" type="submit" value="OK">
@@ -79,18 +87,23 @@
                     socket.emit("updateFrom", (Cookies.get("userID")));
                 }
                 setInterval(Update, 1000)
+                function Round(num)
+                {
+                    return Math.floor(num * 100)
+                }
                 function setupUploads(uploads)
                 {
                     var uploadsArea = document.getElementById("yourUploadsTxt");
                     if(uploads.length <= 0){uploadsArea.innerHTML = "You haven't uploaded any files."; return;}
-                    var newTxt = ""
+                    var newTxt = "<tr><th>File</th><th>Status</th><th>Sounds like</th><!--th>Confidence</th--></tr>"
                     for(var i in uploads)
                     {
                         upload = uploads[i]
-                        var compared = " - complete. This file sounds like " + upload["match"] + " (confidence level of " + upload['confidence'] + ")"
+                        var compared = "<td><b style='color: lightgreen;'>complete</b></td><td><i>" + upload["match"] + "</i></td><!--td>" + Math.floor(upload['confidence']*100) + "%</td-->"
                         if(!upload["complete"])
-                            compared = " - pending"
-                        newTxt += upload["name"] + compared + "<br>";
+                            compared = "<td>pending</td><td>...</td><!--td>...</td--><td></td>";
+
+                        newTxt += "<tr><td>" + upload["name"]+"</td>" + compared + "<br></tr>";
                     }
                     uploadsArea.innerHTML = newTxt;
                 }

@@ -23,7 +23,21 @@ body
 	font-size: 42px;
 	font-size: 6vw;
 }
+#yourUploadsTxt td
+{
+    padding-left: 25px;
+    padding-right: 25px;
 
+}
+#yourUploadsTxt th
+{
+    text-decoration: underline;
+}
+#yourUploads table
+{
+	margin: auto;
+	width: 100%;
+}
 #mainNavs
 {
 	width: 90%;
