@@ -1,0 +1,8 @@
+librosa
+hashlib
+glob
+numpy
+pandas
+scipy
+matplotlib
+IPython

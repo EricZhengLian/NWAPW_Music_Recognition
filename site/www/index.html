@@ -7,8 +7,9 @@
         <script src="./dropzone-5.7.0/dist/dropzone.js"></script>
         <script src="jquery-3.5.1.min.js"></script>
         <script src="js.cookie-2.2.1.min.js"></script>
+        <!--creates the ID for this user if one doesn't already exist-->
         <script>
-            //creates the ID for this user if one doesn't already exist
+            //
             function uuidv4() {
               return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -23,7 +24,8 @@
         <!--Insert google analytics here-->
     </head>
     <body onLoad="fixStuff()">
-    	<nav class="navBar"></nav>
+    	<!--nav class="navBar"></nav-->
+        <!--Page header/cover-->
     	<div style="width: 100%; height: 120vh;">
 	    	<h1 class='title'>Free music fingerprinting, right here on the web.</h1>
 	    	<div id="mainNavs">
@@ -31,11 +33,16 @@
 	    	<div style="grid-area: b;" id="toCompare" class='mainNavigation'><div><h2>Compare</h2></div></div>
 	    	</div>
     	</div>
+
+        <hr>
+        <!--Uploads area-->
         <div id="yourUploads" class='mainSection'>
             <h2>Your files</h2>
             <table id="yourUploadsTxt"></table>
         </div>
-        <br><br><br><br><br><!--I know this is a terrible practice, but i'm lazy--><br><br>
+
+        <hr>
+        <!--Upload for comparison-->
     	<div id="compare" class='mainSection'>
          <h2>Compare a file to our dataset</h2>
          <form name="compareFile" action="/compare/" onsubmit="return VerifyCompare();" method="post" id="compareDropzone" enctype="multipart/form-data">
@@ -58,7 +65,8 @@
              <input class="submitButton" type="submit" value="OK">
          </form>   
         </div>
-        <br><br><br><br><br><br><br>
+        <hr>
+        <!--Upload to database (not functioning)-->
         <div id="upload" class='mainSection'>
     		<h2>Upload a file to the database</h2>
     		<form name="uploadFile" action="/upload/" onsubmit="return VerifyForm();" method="post" id="uploadDropzone" enctype="multipart/form-data">
@@ -72,25 +80,30 @@
                 <input class="submitButton" type="submit" value="OK">
     		</form>
             <script>
+                //create connection to server through socket
     			const socket = io('ws://localhost:3200');
+                //tell the server that we've connected
                 socket.emit("userConnect", Cookies.get("userID"));
 
                 //an upload looks like this: {"name": name of the file, "complete": true/false}
+                //this is when the server decides to update what our uploads are. 
                 socket.on("sendUserUploads", (uploads) =>{
                     console.log(uploads)
                     myUploads = uploads;
                     setupUploads(uploads)
                 });
-
+                //the update function is called once per second
                 function Update()
                 {
                     socket.emit("updateFrom", (Cookies.get("userID")));
                 }
                 setInterval(Update, 1000)
+                //just a helpful math function
                 function Round(num)
                 {
                     return Math.floor(num * 100)
                 }
+                //setup the innerHTML of the uploads section.
                 function setupUploads(uploads)
                 {
                     var uploadsArea = document.getElementById("yourUploadsTxt");
@@ -107,25 +120,32 @@
                     }
                     uploadsArea.innerHTML = newTxt;
                 }
-
+                //utility for clearing cookies
                 function ClearCookies()
                 {
                     document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
                 }
+                //checks to make sure the compare form is valid.
                 function VerifyCompare()
                 {
-                    document.compareFile.userID.value = Cookies.get("userID");
+                    document.compareFile.userID.value = Cookies.get("userID"); //set the user ID that goes with the form
+                    //make sure that the file given is a WAV file
                     if(!document.compareFile.file.value.toString().endsWith(".wav"))
                     {
                         $("#compareError").html("Please upload a .WAV file. ");
                         return false;
                     }
+                    //Not needed anymore, since comparisons are stored on the server side
+                    /*
+                    //setup needed cookies
                     if(!Cookies.get("comparisons")){
                         Cookies.set("comparisons", JSON.stringify([]));
                     }
+                    //add this comparison to the users list of comparisons. 
                     var old = JSON.parse(Cookies.get("comparisons"));
                     old.push(document.compareFile.file.value.toString().replace(/^.*[\\\/]/, ''));
                     Cookies.set("comparisons", JSON.stringify(old));
+                    */
                     return true;
                 }
     			function VerifyForm()
