@@ -35,7 +35,7 @@ except:
 #output might look like this: {'SONG_ID': '07B2461E5D6CFD6F2EDCE43736898C7F3AFE7D06', 'SONG_NAME': 'opera/常思思 - 炫境.wav', 'CONFIDENCE': 0.0035650623885918, 'OFFSET_DIFFERENCE': -1284, 'OFFSET_DIFFERENCE_IN_SEC': 0.09288}
 if len(a) > 0:
 	data["match"] = a["SONG_NAME"]
-	data["confidence"] = a["CONFIDENCE"]
+	data["confidence"] = 1#a["CONFIDENCE"]
 	data["complete"] = True
 out = json.dumps(data)
 print(out)
