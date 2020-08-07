@@ -20,6 +20,10 @@
             {
                 Cookies.set("userID", uuidv4())
             }
+            //stolen from stack overflow
+            function goToByScroll(id){
+                    $('html,body').animate({scrollTop: $("#"+id).offset().top},'slow');
+                }
         </script>
         <!--Insert google analytics here-->
     </head>
@@ -29,8 +33,8 @@
     	<div style="width: 100%; height: 120vh;">
 	    	<h1 class='title'>Free music fingerprinting, right here on the web.</h1>
 	    	<div id="mainNavs">
-	    	<div onclick='location.href = "#upload"' style="grid-area: a;" id="toUpload" class='mainNavigation'><div><h2>Upload</h2></div></div>
-	    	<div style="grid-area: b;" id="toCompare" class='mainNavigation'><div><h2>Compare</h2></div></div>
+	    	<div onclick='goToByScroll("upload");' style="grid-area: a;" id="toUpload" class='mainNavigation'><div><h2>Upload</h2></div></div>
+	    	<div onclick='goToByScroll("compare");' style="grid-area: b;" id="toCompare" class='mainNavigation'><div><h2>Compare</h2></div></div>
 	    	</div>
     	</div>
 
@@ -50,16 +54,7 @@
             <label for="file">File: </label>
              <input type="file" id="file" name="file" required>
              <select id="category" name="category">
-                <option value="classical">Classical</option>
-                <option value="country">Country</option>
-                <option value="electronic">Electronic</option>
-                <option value="heavy metal">Heavy Metal</option>
-                <option value="hiphop">Hip Hop</option>
-                <option value="jazz">Jazz</option>
-                <option value="Kpop">Kpop</option>
-                <option value="opera">Opera</option>
-                <option value="R&B">R&B</option>
-                <option value="rock">Rock</option>
+                <option value="classical">Classical</option><option value="country">Country</option><option value="electronic">Electronic</option><option value="heavy metal">Heavy Metal</option><option value="hiphop">Hip Hop</option><option value="jazz">Jazz</option><option value="Kpop">Kpop</option><option value="opera">Opera</option><option value="R&B">R&B</option><option value="rock">Rock</option>
              </select>
             <!--script>
               const recorder = document.compareFile.file;
@@ -81,8 +76,12 @@
     			<p id='uploadError' class='error'></p>
     			<label for="file">File: </label>
     			<input type='file' id='file' name='file' required>
-    			<label for="audio_name">Track Name: </label>
-    			<input type="text" id="audio_name" name="audio_name" placeholder="Name of track" required autocomplete="off"></input><br>
+    			<!--label for="audio_name">Track Name: </label>
+    			<input type="text" id="audio_name" name="audio_name" placeholder="Name of track" required autocomplete="off"></input--><br>
+                <select id="category" name="category">
+                    <option value="classical">Classical</option><option value="country">Country</option><option value="electronic">Electronic</option><option value="heavy metal">Heavy Metal</option><option value="hiphop">Hip Hop</option><option value="jazz">Jazz</option><option value="Kpop">Kpop</option><option value="opera">Opera</option><option value="R&B">R&B</option><option value="rock">Rock</option>
+                </select>
+                <input type="text" id="uploadUserID" name="userID" style="visibility: hidden;">
     			<!--<label for="artist_name">Artist Name:</label>
     			<input type="text" id="artist_name" name="artist_name" placeholder="Name of artist" required autocomplete="off"></input><br>-->
                 <input class="submitButton" type="submit" value="OK">
@@ -159,6 +158,7 @@
     			function VerifyForm()
     			{
     				console.log(Cookies.get());
+                    document.uploadFile.userID.value = Cookies.get("userID"); //set the user id field
     				if(!document.uploadFile.file.value.toString().endsWith(".wav"))
     				{
     					$("#uploadError").html("Please upload a .WAV file. ");
@@ -169,21 +169,11 @@
     					$("#uploadError").html("Name too short");
     					return false;
     				}
-    				//set cookie
-    				//check if "uploads" cookie exists. If not, create it.
-    				if(!Cookies.get("uploads")){
-    					Cookies.set("uploads", JSON.stringify([]));
-    				}
-    				var oldUploads = JSON.parse(Cookies.get("uploads"));
-                    console.log(oldUploads);
-                    var newUpload = document.uploadFile.file.value.toString().replace(/^.*[\\\/]/, '') + " | \"" + document.uploadFile.audio_name.value + "\"";
-    				oldUploads.push(newUpload);
-                    Cookies.set("uploads", JSON.stringify(oldUploads));
                     return true;
     			}
     			function fixStuff()
     			{
-
+                    
     			}
     		</script>
     	</div>

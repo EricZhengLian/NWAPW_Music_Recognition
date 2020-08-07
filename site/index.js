@@ -80,22 +80,30 @@ app.post('/compare', (req, res) => {
 });
 
 app.post('/upload', (req, res) => {
-	//console.log("Name: ", req.body.audio_name);
-	//console.log("Artist: ", req.body.artist_name);
-	//console.log("File: ", req.body.file);
 	const form = new formidable.IncomingForm();
-
-	form.parse(req, function(err, fields, files)
-	{
-		console.log("Uploading file...");
-		console.log(fields);
+	form.parse(req, function(err, fields, files){
+		var userID = fields.userID;
+		var dbname = fields.category
+		console.log("user " + userID + " has uploaded a file for database addition. ");
+		if(users[userID] == undefined)
+		{
+			return; //the user doesn't exist. they shouldn't be uploading stuff
+		}
 		var oldPath = files.file.path;
-		var newPath = path.join(__dirname, "uploads/" + "TITLE " + fields.audio_name + " %%% " + path.basename(files.file.name));
-		var rawData = fs.readFileSync(oldPath)
-
+		var newPath = path.join(__dirname, "uploads/" + path.basename(files.file.name));
+		var rawData = fs.readFileSync(oldPath);
         fs.writeFile(newPath, rawData, function(err){
             if(err) console.log(err);
             return console.log("Successfully uploaded");
+        });
+        
+
+        var process = spawn.spawn('python3', ['../core/onSend.py', path.basename(files.file.name), userID, dbname])
+        console.log("A wild process has appeared!")
+        console.log(['../core/onSend.py', path.basename(files.file.name), userID, dbname])
+        process.stdout.on('data', function(data)
+        {
+        	console.log(data.toString())
         });
 	});
 	res.redirect("/");

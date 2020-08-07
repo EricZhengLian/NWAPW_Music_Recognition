@@ -39,3 +39,8 @@ if len(a) > 0:
 	data["complete"] = True
 out = json.dumps(data)
 print(out)
+
+try:
+	os.system("rm " + path)
+except:
+	pass
